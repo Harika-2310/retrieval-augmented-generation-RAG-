@@ -608,13 +608,306 @@ This separation is important because the knowledge preparation process does not 
 
 ---
 
-# 🧱 Core Components of RAG Architecture
+🧱 Core Components of RAG Architecture
 
 The major components can be summarized as:
 
-```text id="r7y2v1"
 ┌─────────────────────────────┐
 │       1. Data Sources       │
 └──────────────┬──────────────┘
                ↓
-```
+┌─────────────────────────────┐
+│       2. Data Loading       │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│      3. Preprocessing       │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│        4. Chunking          │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│       5. Embeddings         │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│    6. Vector Database       │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│        7. Retriever         │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│      8. Context Builder     │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│          9. LLM             │
+└──────────────┬──────────────┘
+               ↓
+┌─────────────────────────────┐
+│      10. Final Answer       │
+└─────────────────────────────┘
+🔗 Role of Each Component
+Component	Main Responsibility
+Data Sources	Provide external knowledge
+Data Loader	Load information into the pipeline
+Preprocessor	Clean and prepare data
+Chunker	Divide documents into smaller sections
+Embedding Model	Convert text into vectors
+Vector Database	Store and search vector representations
+Retriever	Find relevant information
+Context Builder	Prepare retrieved information for the LLM
+LLM	Understand context and generate response
+Response Layer	Present the generated answer to the user
+⚙️ Basic RAG Architecture vs Advanced RAG Architecture
+Basic RAG
+
+A basic architecture may look like:
+
+Documents
+    ↓
+Chunking
+    ↓
+Embeddings
+    ↓
+Vector Database
+    ↓
+Retrieval
+    ↓
+LLM
+    ↓
+Answer
+Advanced RAG
+
+More sophisticated systems may introduce additional components:
+
+User Query
+    ↓
+Query Transformation
+    ↓
+Hybrid Retrieval
+    ↓
+Filtering
+    ↓
+Reranking
+    ↓
+Context Selection
+    ↓
+Prompt Construction
+    ↓
+LLM
+    ↓
+Answer
+    ↓
+Source Attribution
+
+The architecture depends on the application's requirements.
+
+🔄 Hybrid Retrieval Architecture
+
+Some RAG systems combine different retrieval methods.
+
+                 User Query
+                     │
+             ┌───────┴───────┐
+             ↓               ↓
+       Keyword Search    Vector Search
+             │               │
+             └───────┬───────┘
+                     ↓
+              Combine Results
+                     ↓
+                  Reranking
+                     ↓
+             Relevant Context
+                     ↓
+                    LLM
+Keyword Search
+
+Useful when exact terms matter.
+
+Vector Search
+
+Useful when semantic similarity matters.
+
+Hybrid Search
+
+Combines both approaches.
+
+📈 Reranking in RAG
+
+Initial retrieval may return several potentially relevant chunks.
+
+A reranker can then reorder those results according to their relevance to the query.
+
+User Query
+     ↓
+Initial Retrieval
+     ↓
+Candidate Chunks
+     ↓
+Reranker
+     ↓
+Best Chunks
+     ↓
+LLM
+
+Reranking is an optional component used in more advanced RAG architectures.
+
+🧠 Context Window Consideration
+
+The LLM can process only a certain amount of information within its context.
+
+Therefore, a RAG system should avoid sending unnecessary retrieved information.
+
+Knowledge Base
+     ↓
+Many Documents
+     ↓
+Retrieve Relevant Chunks
+     ↓
+Select Useful Context
+     ↓
+LLM
+
+The goal is to provide relevant context, rather than simply providing as much information as possible.
+
+🎯 Architecture Design Goals
+
+A good RAG architecture generally aims to achieve:
+
+1. High Retrieval Relevance
+
+Retrieve information that is actually useful for the question.
+
+2. Good Context Quality
+
+Provide the LLM with clear and relevant context.
+
+3. Efficient Search
+
+Retrieve information without unnecessary processing.
+
+4. Reliable Responses
+
+Generate answers grounded in useful source information.
+
+5. Scalability
+
+Support increasing amounts of data and users.
+
+6. Maintainability
+
+Allow components such as the knowledge base or retrieval system to be updated independently.
+
+⚠️ Common Architecture Challenges
+
+RAG architecture also introduces several challenges.
+
+Poor Chunking
+
+Incorrect chunk sizes can cause important information to be split or irrelevant information to be combined.
+
+Poor Retrieval
+
+If the retriever selects irrelevant chunks, the LLM receives poor context.
+
+Duplicate Information
+
+Multiple retrieved chunks may contain overlapping information.
+
+Too Much Context
+
+Retrieving too many chunks can introduce noise.
+
+Poor Source Data
+
+Incorrect or outdated documents can lead to incorrect answers.
+
+Latency
+
+Each additional processing stage can increase response time.
+
+🌍 Example Architecture: Company Knowledge Assistant
+
+Consider an organization with:
+
+Company Knowledge
+│
+├── HR Policies
+├── Technical Documentation
+├── Product Manuals
+├── Employee Handbook
+└── Internal Guidelines
+
+The architecture could be:
+
+Company Documents
+       ↓
+Document Processing
+       ↓
+Chunking
+       ↓
+Embeddings
+       ↓
+Vector Database
+       │
+       │
+       ▼
+Employee Question
+       ↓
+Query Embedding
+       ↓
+Retriever
+       ↓
+Relevant Company Information
+       ↓
+Context
+       ↓
+LLM
+       ↓
+Employee Answer
+
+This demonstrates how a RAG architecture connects organizational knowledge with an LLM.
+
+🆚 RAG Architecture vs Traditional LLM Architecture
+Traditional LLM
+User
+ ↓
+LLM
+ ↓
+Response
+RAG
+                External Knowledge
+                       ↓
+                 Retrieval System
+                       ↓
+User → Query → Relevant Context
+                       ↓
+                      LLM
+                       ↓
+                    Response
+
+The major architectural difference is the addition of an external knowledge and retrieval layer.
+
+🔑 Key Takeaways
+RAG architecture connects an LLM with external knowledge.
+It generally contains an ingestion/indexing pipeline and a query/retrieval pipeline.
+Documents are loaded, processed, chunked, embedded, and stored.
+A user's query is converted into a representation suitable for retrieval.
+The retriever finds relevant information.
+Retrieved information is used as context for the LLM.
+The LLM generates the final response.
+Advanced architectures may include hybrid search, filtering, reranking, and query transformation.
+Good architecture depends on retrieval quality, data quality, context quality, and system requirements.
+🧠 RAG Architecture in One Line
+Knowledge → Index → Retrieve → Context → LLM → Answer
+
+Or simply:
+
+Store knowledge → retrieve relevant information → give it to the LLM → generate an answer.
+
